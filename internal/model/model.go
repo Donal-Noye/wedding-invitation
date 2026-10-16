@@ -38,12 +38,12 @@ type Location struct {
 }
 
 type RSVP struct {
-	Slug      string `json:"slug"`
-	Guests    int    `json:"guests"`
-	Name      string `json:"name"`
+	Slug      string `json:"slug"      validate:"required,max=64"`
+	Guests    int    `json:"guests"    validate:"required,gte=1,lte=10"`
+	Name      string `json:"name"      validate:"required,max=100"`
 	Attending bool   `json:"attending"`
-	Fish      string `json:"fish"`
-	Meat      string `json:"meat"`
-	Alcohol   string `json:"alcohol"`
-	Allergies string `json:"allergies"`
+	Fish      string `json:"fish"      validate:"omitempty,oneof=yes no"`
+	Meat      string `json:"meat"      validate:"omitempty,oneof=yes no"`
+	Alcohol   string `json:"alcohol"   validate:"omitempty,oneof=yes little no"`
+	Allergies string `json:"allergies" validate:"max=500"`
 }
