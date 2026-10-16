@@ -1,9 +1,9 @@
 package main
 
 import (
-	"log"
 	"net/http"
 	"wedding-invitation/internal/handler"
+	"wedding-invitation/internal/middleware"
 	"wedding-invitation/internal/model"
 	"wedding-invitation/internal/store"
 )
@@ -42,6 +42,7 @@ func main() {
 	mux.Handle("/api/", api)
 	mux.Handle("/", http.FileServer(http.Dir("web/dist")))
 
-	log.Println("server started at http://localhost:8080")
-	log.Fatal(http.ListenAndServe(":8080", mux))
+	h := middleware.Chain(mux, middleware.Recover, middleware.Logger, middleware.RequestID)
+
+	http.ListenAndServe(":8080", h)
 }
