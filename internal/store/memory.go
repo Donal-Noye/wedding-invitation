@@ -35,3 +35,16 @@ func (s *Memory) SaveRSVP(rsvp model.RSVP) {
 	defer s.mu.Unlock()
 	s.rsvps = append(s.rsvps, rsvp)
 }
+
+func (s *Memory) ListRSVP(slug string) []model.RSVP {
+	s.mu.RLock()
+	defer s.mu.RUnlock()
+
+	out := []model.RSVP{}
+	for _, v := range s.rsvps {
+		if v.Slug == slug {
+			out = append(out, v)
+		}
+	}
+	return out
+}
