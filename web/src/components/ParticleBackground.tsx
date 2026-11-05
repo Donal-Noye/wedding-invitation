@@ -153,5 +153,5 @@ export function ParticleBackground() {
         }
     }, [])
 
-    return <canvas ref={canvasRef} className="particle-background" aria-hidden="true" />
+    return <canvas ref={canvasRef} className="particles" aria-hidden="true" />
 }
