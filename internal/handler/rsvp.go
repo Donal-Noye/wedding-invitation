@@ -2,6 +2,8 @@ package handler
 
 import (
 	"encoding/json"
+	"errors"
+	"log"
 	"net/http"
 	"strings"
 	"wedding-invitation/internal/model"
@@ -12,6 +14,7 @@ import (
 var validate = validator.New()
 
 func (s *Server) PostRSVP(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
 	r.Body = http.MaxBytesReader(w, r.Body, 1<<14)
 
 	var body model.RSVP
@@ -26,12 +29,21 @@ func (s *Server) PostRSVP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if _, ok := s.store.Get(body.Slug); !ok {
-		http.Error(w, "invitation not found", http.StatusNotFound)
+	if _, err := s.invitations.GetInvitation(ctx, body.Slug); err != nil {
+		if errors.Is(err, model.ErrNotFound) {
+			http.Error(w, "invitation not found", http.StatusNotFound)
+			return
+		}
+		log.Println("get invitation:", err)
+		http.Error(w, "internal error", http.StatusInternalServerError)
 		return
 	}
 
-	s.store.SaveRSVP(body)
+	if err := s.rsvps.SaveRSVP(ctx, body); err != nil {
+		log.Println("save rsvp:", err)
+		http.Error(w, "internal error", http.StatusInternalServerError)
+		return
+	}
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
@@ -42,7 +54,12 @@ func (s *Server) PostRSVP(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) ListRSVP(w http.ResponseWriter, r *http.Request) {
 	slug := r.PathValue("slug")
-	rsvps := s.store.ListRSVP(slug)
+	rsvps, err := s.rsvps.ListRSVP(r.Context(), slug)
+	if err != nil {
+		log.Println("list rsvp:", err)
+		http.Error(w, "internal error", http.StatusInternalServerError)
+		return
+	}
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
