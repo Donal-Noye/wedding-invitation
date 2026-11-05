@@ -1,0 +1,351 @@
+.body {
+    display: grid;
+    align-items: center;
+    min-height: 440px;
+}
+
+.form {
+    width: 100%;
+    margin: 0;
+    display: grid;
+    gap: 28px;
+    text-align: center;
+}
+
+/* ===== Шаг: старый уходит, новый приходит, оба видны ===== */
+.stage {
+    display: grid;
+    min-height: 340px;
+    overflow: clip; /* обрезка только у края экрана */
+}
+
+.step {
+    grid-area: 1 / 1;
+    justify-self: center;
+    display: grid;
+    align-content: center;
+    justify-items: center;
+    gap: 20px;
+}
+
+.step[data-anim='in'] {
+    animation: in-next 0.5s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+.step[data-anim='in'][data-dir='back'] {
+    animation-name: in-back;
+}
+
+.step[data-anim='out'] {
+    pointer-events: none;
+    animation: out-next 0.5s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+.step[data-anim='out'][data-dir='back'] {
+    animation-name: out-back;
+}
+
+@keyframes in-next {
+    from {
+        opacity: 0;
+        transform: translateX(80px);
+    }
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+@keyframes in-back {
+    from {
+        opacity: 0;
+        transform: translateX(-80px);
+    }
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+@keyframes out-next {
+    from {
+        opacity: 1;
+        transform: none;
+    }
+    to {
+        opacity: 0;
+        transform: translateX(-80px);
+    }
+}
+
+@keyframes out-back {
+    from {
+        opacity: 1;
+        transform: none;
+    }
+    to {
+        opacity: 0;
+        transform: translateX(80px);
+    }
+}
+
+@media (hover: hover) {
+    .options button:hover {
+        border-color: var(--rose);
+    }
+}
+
+.step h3 {
+    margin: 0;
+    font-style: italic;
+    font-size: clamp(1.8rem, 7vw, 2.4rem);
+    line-height: 1.15;
+}
+
+.hint {
+    margin: -10px 0 0;
+    font-size: 0.8rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--sage);
+}
+
+/* ===== Текстовые поля ===== */
+.input {
+    width: 100%;
+    padding: 10px 0;
+    font: inherit;
+    font-family: var(--serif);
+    font-size: 1.5rem;
+    text-align: center;
+    color: var(--ink);
+    background: transparent;
+    border: 0;
+    border-bottom: 1px solid var(--rose);
+    border-radius: 0;
+    resize: none;
+}
+
+.input:focus {
+    outline: none;
+    border-bottom-width: 2px;
+}
+
+.input::placeholder {
+    color: rgba(185, 163, 138, 0.55);
+}
+
+/* ===== Большие кнопки выбора ===== */
+.options {
+    width: 100%;
+    display: grid;
+    gap: 10px;
+}
+
+.options button {
+    padding: 16px 20px;
+    font: inherit;
+    font-size: 1.05rem;
+    color: var(--ink);
+    background: transparent;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.options button:hover {
+    border-color: var(--rose);
+}
+
+.options button[data-on='true'] {
+    background: var(--rose);
+    border-color: var(--rose);
+    color: #2a1a0f;
+}
+
+/* ===== Количество гостей ===== */
+.counter {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+}
+
+.counter b {
+    min-width: 1.5ch;
+    font-family: var(--serif);
+    font-size: 4rem;
+    font-weight: 500;
+    line-height: 1;
+}
+
+.counter button {
+    width: 52px;
+    height: 52px;
+    padding: 0;
+    font-size: 1.6rem;
+    line-height: 1;
+    color: var(--rose);
+    background: transparent;
+    border: 1px solid var(--line);
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.counter button:hover:not(:disabled) {
+    border-color: var(--rose);
+}
+
+.counter button:disabled {
+    opacity: 0.3;
+    cursor: default;
+}
+
+/* ===== Кнопка «Дальше» / «Отправить» ===== */
+.next {
+    min-width: 220px;
+    padding: 15px 28px;
+    font: inherit;
+    font-weight: 500;
+    color: #2a1a0f;
+    background: var(--rose);
+    border: 0;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: background 0.2s, opacity 0.2s;
+}
+
+.next:hover:not(:disabled) {
+    background: #e6c496;
+}
+
+.next:disabled {
+    opacity: 0.4;
+    cursor: default;
+}
+
+.error {
+    margin: 0;
+    color: #e8a49a;
+    font-size: 0.9rem;
+}
+
+/* ===== Низ: назад, точки, номер шага ===== */
+.nav {
+    width: min(440px, calc(100% - 40px));
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 12px;
+}
+
+.back {
+    justify-self: start;
+    padding: 6px 8px;
+    font: inherit;
+    font-size: 0.9rem;
+    color: var(--sage);
+    background: none;
+    cursor: pointer;
+    border: 1px solid transparent;
+    border-radius: 999px;
+}
+
+.back:disabled {
+    visibility: hidden;
+}
+
+.back:active {
+    border-color: var(--line);
+}
+
+.back, .back:hover, .back:active, .back:focus {
+    background: none;
+    box-shadow: none;
+}
+
+.counterText {
+    justify-self: end;
+    font-size: 0.85rem;
+    color: var(--sage);
+}
+
+.dots {
+    display: flex;
+    gap: 8px;
+}
+
+.dots span {
+    width: 7px;
+    height: 7px;
+    border-radius: 999px;
+    border: 1px solid var(--rose);
+    transition: width 0.3s, background 0.3s;
+}
+
+.dots span[data-done='true'] {
+    background: var(--rose);
+    opacity: 0.5;
+}
+
+.dots span[data-active='true'] {
+    width: 22px;
+    background: var(--rose);
+}
+
+/* ===== Благодарность ===== */
+.thanks {
+    text-align: center;
+    margin: 0 auto;
+}
+
+.thanks svg {
+    width: 72px;
+    height: 72px;
+    fill: none;
+    stroke: var(--rose);
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.thanks circle {
+    stroke-dasharray: 151;
+    stroke-dashoffset: 151;
+    animation: draw 0.9s ease forwards;
+}
+
+.thanks path {
+    stroke-dasharray: 36;
+    stroke-dashoffset: 36;
+    animation: draw 0.5s ease 0.7s forwards;
+}
+
+.thanks p {
+    margin: 16px auto 0;
+    font-family: var(--serif);
+    font-size: 1.5rem;
+    line-height: 1.4;
+}
+
+@keyframes draw {
+    to {
+        stroke-dashoffset: 0;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .step[data-anim] {
+        animation: none;
+    }
+
+    .step[data-anim='out'] {
+        display: none;
+    }
+
+    .thanks circle, .thanks path {
+        animation: none;
+        stroke-dashoffset: 0;
+    }
+}
