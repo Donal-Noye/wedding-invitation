@@ -1,96 +1,79 @@
-import { useEffect, useState } from 'react'
-import { getInvitation, type Invitation } from './api'
-import { ParticleBackground } from './components/ParticleBackground'
-import { RSVPForm } from './components/RSVPForm'
-import { useCountdown } from './hooks/useCountdown'
+import {useEffect, useState} from 'react'
+import {getInvitation, type Invitation} from './api'
+import {RSVPFormSection} from './components/RSVPFormSection/RSVPFormSection.tsx'
+import {useCountdown} from './hooks/useCountdown'
 import './App.css'
+import {Hero} from "./components/Hero/Hero.tsx";
+import {StorySection} from "./components/InviteSection/StorySection.tsx";
+import {useSectionScroll} from "./hooks/useSectionScroll.tsx";
+import {RoadmapSection} from "./components/RoadmapSection/RoadmapSection.tsx";
+import {DresscodeSection} from "./components/DresscodeSection/DresscodeSection.tsx";
 
 const INVITATION_SLUG = 'anna-ivan'
 
-function InvitationPage({ invitation }: { invitation: Invitation }) {
-  const countdown = useCountdown(new Date(invitation.wedding_date))
-  const date = new Date(invitation.wedding_date)
-  const dateText = date.toLocaleDateString('ru-RU', {
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric',
-  })
+function InvitationPage({invitation}: { invitation: Invitation }) {
+    useSectionScroll()
 
-  const timeUnits = [
-    [countdown.days, 'дней'],
-    [countdown.hours, 'часов'],
-    [countdown.minutes, 'минут'],
-    [countdown.seconds, 'секунд'],
-  ] as const
+    const countdown = useCountdown(new Date(invitation.wedding_date))
+    const date = new Date(invitation.wedding_date)
+    const dateText = date.toLocaleDateString('ru-RU', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+    })
 
-  return (
-    <main>
-      <ParticleBackground />
+    const timeUnits = [
+        [countdown.days, 'дней'],
+        [countdown.hours, 'часов'],
+        [countdown.minutes, 'минут'],
+        [countdown.seconds, 'секунд'],
+    ] as const
 
-      <section className="hero">
-        <div className="photos">
-          <img src={invitation.hero.bride_photo} alt={invitation.bride} />
-          <img src={invitation.hero.groom_photo} alt={invitation.groom} />
-        </div>
-        <h1>{invitation.bride} и {invitation.groom}</h1>
-        <p className="date">{dateText}</p>
-        <p className="lead">{invitation.hero.lead}</p>
-        <div className="timer" aria-label="Время до свадьбы">
-          {timeUnits.map(([value, label]) => (
-            <div key={label}><b>{String(value).padStart(2, '0')}</b><span>{label}</span></div>
-          ))}
-        </div>
-      </section>
+    const slides = [
+        {
+            photo: 'https://placehold.co/600x800/3a2417/f3e7d7?text=1',
+            title: 'Мы встретились',
+            text: 'Это было случайно. Но мы теперь делаем вид, что всё было задумано.'
+        },
+        {
+            photo: 'https://placehold.co/600x800/4a2e1d/f3e7d7?text=2',
+            title: 'Мы поняли',
+            text: 'Что вместе интереснее. И вкуснее.'
+        },
+        {
+            photo: 'https://placehold.co/600x800/2c1b11/f3e7d7?text=3',
+            title: 'Мы решили',
+            text: 'И теперь зовём вас разделить этот день.'
+        },
+    ]
 
-      <section>
-        <h2>{invitation.invite_text.title}</h2>
-        <img className="wide" src={invitation.invite_text.photo} alt={`${invitation.bride} и ${invitation.groom}`} />
-        <p>{invitation.invite_text.text}</p>
-      </section>
+    return (
+        <main>
+            <Hero invitation={invitation} dateText={dateText} timeUnits={timeUnits}/>
 
-      <section>
-        <h2>Где и когда</h2>
-        <p className="big">{invitation.location.title}</p>
-        <p>{invitation.location.venue}, {invitation.location.address}</p>
-        <p className="note">{invitation.location.note}</p>
-        <a className="link" href={invitation.location.map_url} target="_blank" rel="noreferrer">Открыть на карте</a>
-      </section>
+            <StorySection slides={slides}/>
 
-      <section>
-        <h2>Расписание дня</h2>
-        <ol className="schedule">
-          {invitation.schedule_items.map((item) => (
-            <li key={item.time}>
-              <time>{item.time}</time>
-              <div><h3>{item.title}</h3><p>{item.note}</p></div>
-            </li>
-          ))}
-        </ol>
-      </section>
+            <RoadmapSection items={invitation.schedule_items} title="Дорожная карта"/>
 
-      <section>
-        <h2>Подтвердите приглашение</h2>
-        <p className="note">Чтобы повара не гадали, а мы не считали гостей по тостам.</p>
-        <RSVPForm slug={invitation.slug} />
-      </section>
+            {invitation.dress_code && <DresscodeSection data={invitation.dress_code}/>}
 
-      <footer>До встречи! {invitation.bride} и {invitation.groom}</footer>
-    </main>
-  )
+            <RSVPFormSection slug={invitation.slug}/>
+        </main>
+    )
 }
 
 export default function App() {
-  const [invitation, setInvitation] = useState<Invitation | null>(null)
-  const [loadError, setLoadError] = useState('')
+    const [invitation, setInvitation] = useState<Invitation | null>(null)
+    const [loadError, setLoadError] = useState('')
 
-  useEffect(() => {
-    getInvitation(INVITATION_SLUG)
-      .then(setInvitation)
-      .catch(() => setLoadError('Не удалось загрузить приглашение. Попробуйте обновить страницу.'))
-  }, [])
+    useEffect(() => {
+        getInvitation(INVITATION_SLUG)
+            .then(setInvitation)
+            .catch(() => setLoadError('Не удалось загрузить приглашение. Попробуйте обновить страницу.'))
+    }, [])
 
-  if (loadError) return <main><p role="alert">{loadError}</p></main>
-  if (!invitation) return <main><p>Загружаем приглашение…</p></main>
+    if (loadError) return <main><p role="alert">{loadError}</p></main>
+    if (!invitation) return <main><p>Загружаем приглашение…</p></main>
 
-  return <InvitationPage invitation={invitation} />
+    return <InvitationPage invitation={invitation}/>
 }
