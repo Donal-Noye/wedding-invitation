@@ -1,9 +1,14 @@
 package model
 
+import "errors"
+
+var ErrNotFound = errors.New("not found")
+
 type ScheduleItem struct {
 	Time  string `json:"time"`
 	Title string `json:"title"`
 	Note  string `json:"note"`
+	Place string `json:"place,omitempty"`
 }
 
 type Invitation struct {
@@ -14,6 +19,7 @@ type Invitation struct {
 	Hero        Hero           `json:"hero"`
 	Invitation  InviteText     `json:"invite_text"`
 	Location    Location       `json:"location"`
+	DressCode   DressCode      `json:"dress_code"`
 	Schedule    []ScheduleItem `json:"schedule_items"`
 }
 
@@ -35,6 +41,19 @@ type Location struct {
 	Address string `json:"address"`
 	Note    string `json:"note"`
 	MapURL  string `json:"map_url"`
+}
+
+type Swatch struct {
+	Name string `json:"name"`
+	Hex  string `json:"hex"`
+}
+
+type DressCode struct {
+	Title  string   `json:"title"`
+	Text   string   `json:"text"`
+	Colors []Swatch `json:"colors"`
+	Do     []string `json:"do"`
+	Avoid  []string `json:"avoid"`
 }
 
 type RSVP struct {
