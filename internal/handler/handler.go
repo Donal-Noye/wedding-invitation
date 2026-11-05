@@ -1,38 +1,56 @@
 package handler
 
 import (
+	"context"
+	"crypto/subtle"
 	"net/http"
+	"strings"
 	"wedding-invitation/internal/model"
 )
 
 type InvitationStore interface {
-	Get(slug string) (*model.Invitation, bool)
-	Save(inv *model.Invitation)
+	GetInvitation(ctx context.Context, slug string) (*model.Invitation, error)
+	SaveInvitation(ctx context.Context, inv *model.Invitation) error
 }
 
 type RSVPStore interface {
-	SaveRSVP(rsvp model.RSVP)
-	ListRSVP(slug string) []model.RSVP
-}
-
-type Store interface {
-	InvitationStore
-	RSVPStore
+	SaveRSVP(ctx context.Context, rsvp model.RSVP) error
+	ListRSVP(ctx context.Context, slug string) ([]model.RSVP, error)
 }
 
 type Server struct {
-	store Store
+	invitations InvitationStore
+	rsvps       RSVPStore
+	adminToken  string
 }
 
-func New(store Store) *Server {
-	return &Server{store: store}
+func New(inv InvitationStore, rsvps RSVPStore, adminToken string) *Server {
+	return &Server{invitations: inv, rsvps: rsvps, adminToken: adminToken}
 }
 
 func (s *Server) Routes() http.Handler {
 	mux := http.NewServeMux()
 	mux.HandleFunc("GET /api/invitation/{slug}", s.GetInvitation)
-	mux.HandleFunc("PATCH /api/invitation/{slug}", s.PatchInvitation)
+	mux.Handle("PATCH /api/invitation/{slug}", s.requireAdmin(http.HandlerFunc(s.PatchInvitation)))
 	mux.HandleFunc("POST /api/rsvp", s.PostRSVP)
-	mux.HandleFunc("GET /api/rsvp/{slug}/rsvps", s.ListRSVP)
+	mux.Handle("GET /api/rsvp/{slug}/rsvps", s.requireAdmin(http.HandlerFunc(s.ListRSVP)))
 	return mux
+}
+
+func (s *Server) requireAdmin(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if s.adminToken == "" {
+			http.Error(w, "admin access is not configured", http.StatusServiceUnavailable)
+			return
+		}
+
+		token, ok := strings.CutPrefix(r.Header.Get("Authorization"), "Bearer ")
+		if !ok || len(token) != len(s.adminToken) || subtle.ConstantTimeCompare([]byte(token), []byte(s.adminToken)) != 1 {
+			w.Header().Set("WWW-Authenticate", "Bearer")
+			http.Error(w, "unauthorized", http.StatusUnauthorized)
+			return
+		}
+
+		next.ServeHTTP(w, r)
+	})
 }
