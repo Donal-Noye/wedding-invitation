@@ -25,6 +25,7 @@ func Logger(next http.Handler) http.Handler {
 		start := time.Now()
 		defer func() {
 			slog.Info("request",
+				"id", w.Header().Get("X-Request-ID"),
 				"method", r.Method,
 				"path", r.URL.Path,
 				"duration", time.Since(start),
