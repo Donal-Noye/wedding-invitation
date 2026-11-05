@@ -6,6 +6,7 @@ export type Invitation = {
     hero: { bride_photo: string; groom_photo: string; lead: string }
     invite_text: { title: string; text: string; photo: string }
     location: { title: string; venue: string; address: string; note: string; map_url: string }
+    dress_code: { title: string, text: string, colors: { name: string, hex: string }[], do: string[], avoid: string[] }
     schedule_items: { time: string; title: string; note: string }[]
 }
 
@@ -38,7 +39,7 @@ export function getInvitation(slug: string): Promise<Invitation> {
 export function submitRSVP(rsvp: RSVP): Promise<RSVP> {
     return request<RSVP>('/api/rsvp', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {'Content-Type': 'application/json'},
         body: JSON.stringify(rsvp),
     })
 }
