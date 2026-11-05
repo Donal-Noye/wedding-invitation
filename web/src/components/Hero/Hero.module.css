@@ -163,25 +163,3 @@
         animation: none;
     }
 }
-
-.arrow {
-    font-size: 24px;
-    animation: float 1.8s ease-in-out infinite;
-}
-
-@keyframes float {
-    0%, 100% {
-        transform: translateY(0);
-    }
-
-    50% {
-        transform: translateY(6px);
-    }
-}
-
-@media (prefers-reduced-motion: reduce) {
-    .scrollButton::before,
-    .arrow {
-        animation: none;
-    }
-}

@@ -1,8 +1,5 @@
 .text { max-width: 40ch; margin: 0 auto; font-family: var(--serif); font-size: 1.25rem; }
 
-.dress {
-}
-
 /* ===== Лоскуты на верёвке ===== */
 .swatches {
     position: relative;

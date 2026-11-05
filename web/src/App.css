@@ -63,29 +63,6 @@ h3 {
 }
 
 
-.pill {
-    background: var(--field);
-    border: 1px solid var(--line);
-}
-
-.pill.on {
-    background: var(--ink);
-    color: var(--paper);
-    border-color: var(--ink);
-}
-
-.pill input {
-    position: absolute;
-    opacity: 0;
-    inset: 0;
-    cursor: pointer;
-}
-
-.pill:focus-within {
-    outline: 2px solid var(--rose);
-    outline-offset: 2px;
-}
-
 button {
     background: var(--rose);
     color: #1a1208;
@@ -111,12 +88,6 @@ button {
     user-select: none; /* без выделения текста кнопки */
 }
 
-.thanks {
-    font-family: var(--serif);
-    font-size: 1.6rem;
-    color: var(--rose);
-}
-
 footer {
     text-align: center;
     padding-top: 32px;
@@ -138,15 +109,6 @@ main > footer {
     height: 100%;
     pointer-events: none;
     z-index: -1;
-}
-
-.content {
-    position: relative;
-    z-index: 1;
-    min-height: 100vh;
-    display: grid;
-    place-content: center;
-    text-align: center;
 }
 
 .container {
