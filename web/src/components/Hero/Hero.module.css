@@ -1,0 +1,187 @@
+.hero {
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+
+    position: relative;
+    min-height: 100svh;
+    overflow: hidden;
+    isolation: isolate;
+}
+
+.content {
+    margin-top: -120px;
+
+    position: relative;
+    z-index: 1;
+}
+
+.photos {
+    display: flex;
+    justify-content: center;
+    gap: 28px;
+    margin-bottom: 44px;
+}
+
+.photos img {
+    width: 42%;
+    max-width: 240px;
+    aspect-ratio: 3 / 4;
+    object-fit: cover;
+}
+
+.heroNames {
+    font-size: clamp(4rem, 12vw, 14rem);
+    line-height: 0.9;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    text-align: center;
+    margin: 0 0 24px;
+    width: 100%;
+    padding-inline: 1rem;
+    box-sizing: border-box;
+}
+
+.date {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    gap: 16px;
+    font-family: var(--sans);
+    font-size: 0.85rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--rose);
+}
+.date::before, .date::after {
+    content: "";
+    width: 40px;
+    height: 1px;
+    background: var(--rose);
+    opacity: 0.6;
+}
+
+.lead {
+    margin: 16px auto 36px;
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 1.3rem;
+    color: var(--sage);
+}
+
+.timer { display: grid; grid-template-columns: repeat(4, 1fr); max-width: 420px; margin: 0 auto; }
+.timer div + div { border-left: 1px solid var(--line); }
+.timer b { display: block; font-family: var(--serif); font-size: 1.6rem; font-weight: 500; color: var(--ink); }
+.timer span { font-size: 0.5rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--sage); }
+
+.scrollButton {
+    position: absolute;
+    z-index: 2;
+    bottom: 32px;
+    left: 50%;
+    transform: translateX(-50%);
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+
+    padding: 14px 24px;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 999px;
+
+    color: #d6b38b;
+    font: inherit;
+    font-size: 14px;
+    letter-spacing: 0.12em;
+    cursor: pointer;
+
+    -webkit-tap-highlight-color: transparent;
+    isolation: isolate;
+}
+
+.scrollButton:active,
+.scrollButton:focus,
+.scrollButton:hover {
+    background: transparent;
+}
+
+/* Расходящаяся граница */
+.scrollButton::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border: 1px solid #d6b38b;
+    border-radius: inherit;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.scrollButton.ripple::before {
+    animation: borderRipple 1s ease-out forwards;
+}
+
+.scrollButton.ripple::after {
+    animation: borderRipple 1.2s ease-out 0.85s forwards;
+}
+
+@keyframes borderRipple {
+    0% {
+        inset: 0;
+        opacity: 0.8;
+        border-width: 1px;
+    }
+
+    100% {
+        inset: -18px;
+        opacity: 0;
+        border-width: 1px;
+    }
+}
+
+.arrow {
+    font-size: 24px;
+    animation: float 1.8s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(6px);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .scrollButton::before,
+    .arrow {
+        animation: none;
+    }
+}
+
+.arrow {
+    font-size: 24px;
+    animation: float 1.8s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(6px);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .scrollButton::before,
+    .arrow {
+        animation: none;
+    }
+}
